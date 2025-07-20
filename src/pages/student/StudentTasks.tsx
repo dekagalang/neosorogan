@@ -10,6 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Star, Clock, CheckCircle } from 'lucide-react';
 
+interface WordEntry {
+  word: string;
+  meaning: string;
+  sentence: string;
+  description: string;
+}
+
 const StudentTasks = () => {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -76,6 +83,18 @@ const StudentTasks = () => {
     return Array.from({ length: count }).map((_, i) => (
       <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
     ));
+  };
+
+  // Helper function to safely parse words from Json
+  const parseWords = (wordsJson: any): WordEntry[] => {
+    if (!wordsJson) return [];
+    if (Array.isArray(wordsJson)) return wordsJson as WordEntry[];
+    try {
+      const parsed = typeof wordsJson === 'string' ? JSON.parse(wordsJson) : wordsJson;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
   };
 
   if (showSubmissionForm) {
@@ -192,7 +211,7 @@ const StudentTasks = () => {
 
                     <div className="space-y-3">
                       <h4 className="font-medium">Vocabulary Words:</h4>
-                      {selectedDateTask.words.map((word: any, index: number) => (
+                      {parseWords(selectedDateTask.words).map((word: WordEntry, index: number) => (
                         <div key={index} className="border border-gray-200 rounded-lg p-3">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                             <div><strong>Word:</strong> {word.word}</div>

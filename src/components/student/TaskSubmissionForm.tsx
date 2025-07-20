@@ -27,13 +27,15 @@ const TaskSubmissionForm = ({ onSubmit, existingTask }: TaskSubmissionFormProps)
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const initialWords: WordEntry[] = existingTask?.words || [
-    { word: '', meaning: '', sentence: '', description: '' },
-    { word: '', meaning: '', sentence: '', description: '' },
-    { word: '', meaning: '', sentence: '', description: '' },
-    { word: '', meaning: '', sentence: '', description: '' },
-    { word: '', meaning: '', sentence: '', description: '' }
-  ];
+  const initialWords: WordEntry[] = existingTask?.words ? 
+    (Array.isArray(existingTask.words) ? existingTask.words as WordEntry[] : []) :
+    [
+      { word: '', meaning: '', sentence: '', description: '' },
+      { word: '', meaning: '', sentence: '', description: '' },
+      { word: '', meaning: '', sentence: '', description: '' },
+      { word: '', meaning: '', sentence: '', description: '' },
+      { word: '', meaning: '', sentence: '', description: '' }
+    ];
 
   // Add extra words if there's a penalty
   if (existingTask?.extra_words_penalty > 0) {
@@ -86,7 +88,7 @@ const TaskSubmissionForm = ({ onSubmit, existingTask }: TaskSubmissionFormProps)
         const { error } = await supabase
           .from('tasks')
           .update({
-            words: words,
+            words: words as any,
             submitted_at: new Date().toISOString()
           })
           .eq('id', existingTask.id);
@@ -104,7 +106,7 @@ const TaskSubmissionForm = ({ onSubmit, existingTask }: TaskSubmissionFormProps)
           .insert({
             student_id: user?.id,
             submission_date: today,
-            words: words,
+            words: words as any,
             submitted_at: new Date().toISOString()
           });
 
