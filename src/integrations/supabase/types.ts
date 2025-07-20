@@ -296,6 +296,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      is_student_enrolled_in_class: {
+        Args: { class_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       user_role: "student" | "teacher" | "admin"
